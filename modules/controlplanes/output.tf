@@ -4,6 +4,16 @@ output "name" {
 }
 
 output "ip" {
-value = var.controlplane_ips
+  value = var.controlplane_ips
+  description = ""
+}
+
+output "controlplane_count" {
+  value = var.controlplane_count
+  description = ""
+}
+
+output "vm_user" {
+  value = var.vm_user
   description = ""
 }

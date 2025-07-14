@@ -48,3 +48,8 @@ variable "vm_user" {
     type = string
     default = "talos"
 }
+
+variable "nfs_allowed_access_ip" {
+    type = string
+    default = "192.168.254.0/24"
+}
