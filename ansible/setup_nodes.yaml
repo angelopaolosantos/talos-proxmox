@@ -1,0 +1,20 @@
+---
+# file: setup_nodes.yaml
+
+- hosts: cluster
+  roles:
+    - common
+
+- hosts: nfs
+  vars_files:
+    - tf_ansible_vars_file.yaml
+  roles:
+    - nfs
+
+- hosts: load_balancers
+  vars_files:
+    - tf_ansible_vars_file.yaml
+  roles:
+    - load_balancer
+  tags:
+    - setup_load_balancers

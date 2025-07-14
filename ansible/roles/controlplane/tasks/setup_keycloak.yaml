@@ -1,0 +1,28 @@
+---
+# file: roles/controlplane/tasks/setup_keycloak.yaml
+
+- name: Add codecentric chart repo
+  kubernetes.core.helm_repository:
+    name: codecentric
+    repo_url: "https://codecentric.github.io/helm-charts"
+
+- name: ensures /tmp/keycloak dir exists
+  file: 
+    path: "/tmp/keycloak"
+    state: directory
+    recurse: true
+
+- name: Copy values.yaml.j2
+  ansible.builtin.template:
+    src: keycloak/values.yaml.j2
+    dest: /tmp/keycloak/values.yaml
+
+- name: Deploy keycloak
+  kubernetes.core.helm:
+    name: keycloak
+    chart_ref: codecentric/keycloak
+    release_namespace: keycloak
+    create_namespace: true
+    state: present # present|absent; Set to absent to delete. Then manually delete PVC in keycloak namespace
+    values_files: 
+      - /tmp/keycloak/values.yaml
