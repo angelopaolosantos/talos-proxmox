@@ -22,6 +22,8 @@ This project lets you run a Highly Available Kubernetes Cluster on a local Proxm
   * Terraform
   * Ansible
   * Transcrypt
+  * Helm
+  * helm-diff plugin
 * Proxmox Server
 * Postgresql Server (optional, used as Terraform backend)
 

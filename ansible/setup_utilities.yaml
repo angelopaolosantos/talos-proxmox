@@ -1,0 +1,25 @@
+---
+# file: setup_utilities.yaml
+
+- hosts: localhost
+  tasks:
+    - name: Add metrics-server chart repo
+      kubernetes.core.helm_repository:
+        name: metrics-server
+        repo_url: "https://kubernetes-sigs.github.io/metrics-server/"
+
+    - name: Deploy metrics-server
+      kubernetes.core.helm:
+        name: metrics-server
+        kubeconfig: ./../kubeconfig
+        chart_ref: metrics-server/metrics-server
+        release_namespace: kube-system
+        create_namespace: true
+        state: present # present | absent
+        set_values:
+          - value: args="{--kubelet-insecure-tls}" # you can also edit manually by 'k edit deploy metrics-server -n kube-system'
+
+# - import_playbook: setup_nodes.yaml
+# - import_playbook: initialize_cluster.yaml
+# - import_playbook: setup_controlplanes.yaml
+# - import_playbook: setup_applications.yaml

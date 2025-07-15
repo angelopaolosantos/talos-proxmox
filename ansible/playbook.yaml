@@ -9,10 +9,16 @@
     - name: Check mandatory variables imported from Terraform
       assert:
         that:
-          - tf_nfs_ip is defined
+          - tf_controlplane_ip is defined
+          - tf_worker_ip is defined
+          - tf_nfs_server_ip is defined
+          - tf_ansible_control_node_ip is defined
+          - nfs_allowed_access_ip is defined
         fail_msg: "tf_* variable usually defined in './ansible/tf_ansible_vars_file.yaml' is missing"
 
-- import_playbook: setup_nodes.yaml
-- import_playbook: initialize_cluster.yaml
-- import_playbook: setup_controlplanes.yaml
-- import_playbook: setup_applications.yaml
+# - import_playbook: setup_nodes.yaml
+# - import_playbook: initialize_cluster.yaml
+# - import_playbook: setup_controlplanes.yaml
+# - import_playbook: setup_applications.yaml
+
+- import_playbook: setup_utilities.yaml
