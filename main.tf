@@ -86,7 +86,7 @@ module "ansible_control_node" {
 
 resource "ansible_host" "controlplane" {
   name   = module.controlplanes.ip[count.index]
-  groups = ["controlplanes","controlplane-${count.index+1}"]
+  groups = ["controlplanes","controlplane_${count.index+1}"]
 
   variables = {
     ansible_user                 = module.controlplanes.vm_user
@@ -105,7 +105,7 @@ resource "ansible_host" "controlplane" {
 
 resource "ansible_host" "worker" {
   name   = module.workers.ip[count.index]
-  groups = ["workers","worker-${count.index+1}"]
+  groups = ["workers","worker_${count.index+1}"]
 
   variables = {
     ansible_user                 = module.workers.vm_user

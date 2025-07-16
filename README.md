@@ -122,17 +122,17 @@ terraform show -json
 
 Create kubectl alias
 ```
-alias k="kubectl --kubeconfig ansible/fetch/192.168.254.101/.kube/admin.conf"
+alias k="kubectl --kubeconfig ./kubeconfig"
 ```
 
 Create k9s alias
 ```
-alias k9x="k9s --kubeconfig ansible/fetch/192.168.254.101/.kube/admin.conf"
+alias k9x="k9s --kubeconfig ./kubeconfig"
 ```
 
 Create helm alias
 ```
-alias h="helm --kubeconfig ansible/fetch/192.168.254.101/.kube/admin.conf"
+alias h="helm --kubeconfig ./kubeconfig"
 ```
 
 Argo CD initial password

@@ -1,20 +1,42 @@
 ---
 # file: setup_nodes.yaml
+- hosts: ansible_control_node
+  become: true
+  vars: 
+    kubeconfig_temp_path: "/tmp/kubeconfig"
+  vars_files:
+    - tf_ansible_vars_file.yaml
+  tasks:
+    - name: Install helm if not exists
+      unarchive:
+        src: https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz
+        dest: /usr/local/bin
+        extra_opts: "--strip-components=1"
+        owner: root
+        group: root
+        mode: 0755
+        remote_src: true
+      args:
+        creates: /usr/local/bin/helm
 
-- hosts: cluster
-  roles:
-    - common
+    - name: Install a Helm plugin
+      kubernetes.core.helm_plugin:
+        plugin_path: https://github.com/databus23/helm-diff  # Replace with the actual plugin repository URL
+        state: present
+      # delegate_to: localhost # Run this task on the machine where Helm is installed (e.g., your Ansible control node)
+
+
+    - name: Copy kubeconfig file on the remote machine
+      ansible.builtin.copy:
+        src: ./../kubeconfig
+        dest: "{{ kubeconfig_temp_path }}"
+        mode: '0600'
+        owner: root
+        group: root
+
 
 - hosts: nfs
   vars_files:
     - tf_ansible_vars_file.yaml
   roles:
     - nfs
-
-- hosts: load_balancers
-  vars_files:
-    - tf_ansible_vars_file.yaml
-  roles:
-    - load_balancer
-  tags:
-    - setup_load_balancers
