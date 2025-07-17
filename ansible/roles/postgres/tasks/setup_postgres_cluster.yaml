@@ -1,39 +1,34 @@
 ---
 # file: roles/postgres/tasks/setup_postgress_cluster.yaml
-
 - name: ensures postgres dir exists
   file: 
-    path: "./postgres"
+    path: "/tmp/postgres"
     state: directory
     recurse: true
 
 - name: Copy pg-config.yaml
   ansible.builtin.copy:
     src: ./pg-config.yaml
-    dest: ~/postgres/pg-config.yaml
+    dest: /tmp/postgres/pg-config.yaml
 
 - name: Copy pg-operator-manifests.yaml
   ansible.builtin.copy:
     src: ./pg-operator-manifests.yaml
-    dest: ~/postgres/pg-operator-manifests.yaml
+    dest: /tmp/postgres/pg-operator-manifests.yaml
 
-- name: Run kubectl create
-  shell:
-    cmd: |
-      kubectl create -f ~/postgres/pg-config.yaml
-      kubectl create -f ~/postgres/pg-operator-manifests.yaml
-  ignore_errors: true
-  register: kubectl_create_result
+- name: Run kubectl create -f /tmp/postgres/pg-config.yaml
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: /tmp/postgres/pg-config.yaml
 
-- debug: var=kubectl_create_result.stdout_lines
-
-- name: Run kubectl apply
-  shell:
-    cmd: |
-      kubectl apply -f ~/postgres/pg-config.yaml
-      kubectl apply -f ~/postgres/pg-operator-manifests.yaml
-  ignore_errors: true
-  register: kubectl_apply_result
-
-- debug: var=kubectl_apply_result.stdout_lines
+- name: kubectl create -f /tmp/postgres/pg-operator-manifests.yaml
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: /tmp/postgres/pg-operator-manifests.yaml
 

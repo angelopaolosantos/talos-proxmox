@@ -19,6 +19,7 @@
 
 - name: Deploy keycloak
   kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     name: keycloak
     chart_ref: codecentric/keycloak
     release_namespace: keycloak

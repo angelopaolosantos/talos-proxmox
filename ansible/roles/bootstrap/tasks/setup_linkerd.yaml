@@ -8,6 +8,7 @@
 
 - name: Deploy linkerd CRDs
   kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     name: linkerd-crds
     chart_ref: linkerd-edge/linkerd-crds
     release_namespace: linkerd
@@ -16,36 +17,37 @@
 
 - name: ensures linkerd dir exists
   file: 
-    path: "./linkerd"
+    path: "/tmp/linkerd"
     state: directory
     recurse: true
 
 - name: Copy linkerd ca.crt
   ansible.builtin.copy:
     src: linkerd/ca.crt
-    dest: ~/linkerd/ca.crt
+    dest: /tmp/linkerd/ca.crt
 
 - name: Copy linkerd issuer.crt
   ansible.builtin.copy:
     src: linkerd/issuer.crt
-    dest: ~/linkerd/issuer.crt
+    dest: /tmp/linkerd/issuer.crt
 
 - name: Copy linkerd issuer.key
   ansible.builtin.copy:
     src: linkerd/issuer.key
-    dest: ~/linkerd/issuer.key
+    dest: /tmp/linkerd/issuer.key
 
 - name: Deploy linkerd
   kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     name: linkerd-control-plane
     chart_ref: linkerd-edge/linkerd-control-plane
     release_namespace: linkerd
     create_namespace: true
     state: present # present | absent
     set_values:
-      - value: identityTrustAnchorsPEM=linkerd/ca.crt
+      - value: identityTrustAnchorsPEM=/tmp/linkerd/ca.crt
         value_type: file
-      - value: identity.issuer.tls.crtPEM=linkerd/issuer.crt
+      - value: identity.issuer.tls.crtPEM=/tmp/linkerd/issuer.crt
         value_type: file
-      - value: identity.issuer.tls.keyPEM=linkerd/issuer.key
+      - value: identity.issuer.tls.keyPEM=/tmp/linkerd/issuer.key
         value_type: file

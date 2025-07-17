@@ -3,62 +3,47 @@
 - name: Setup NFS provisioner
   import_tasks: setup_nfs_provisioner.yaml
   become: true
-  become_user: ubuntu
   tags:
     - nfs
-
-- name: Setup metallb
-  import_tasks: setup_metallb.yaml
-  become: true
-  become_user: ubuntu
-  tags:
-    - metallb
 
 - name: Setup nginx-ingress
   import_tasks: setup_nginx_ingress.yaml
   become: true
-  become_user: ubuntu
   tags:
     - ingress
 
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
   become: true
-  become_user: ubuntu
   tags:
     - argocd
 
 - name: Setup sealed-secrets
   import_tasks: setup_sealed_secrets.yaml
   become: true
-  become_user: ubuntu
   tags:
     - sealedsecrets
 
 - name: Setup prometheus
   import_tasks: setup_prometheus.yaml
   become: true
-  become_user: ubuntu
   tags:
     - prometheus
 
 - name: Setup linkerd
   import_tasks: setup_linkerd.yaml
   become: true
-  become_user: ubuntu
   tags:
     - linkerd
 
 - name: Setup metrics-server
   import_tasks: setup_metrics_server.yaml
   become: true
-  become_user: ubuntu
   tags:
     - metrics-server
 
 - name: Setup keycloak
   import_tasks: setup_keycloak.yaml
   become: true
-  become_user: ubuntu
   tags:
     - keycloak

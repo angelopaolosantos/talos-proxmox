@@ -8,6 +8,7 @@
 
 - name: Deploy nginx-ingress
   kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     name: nginx-ingress
     chart_ref: nginx-stable/nginx-ingress
     release_namespace: nginx-ingress
@@ -28,6 +29,7 @@
 
 - name: Gather information of nginx-ingress chart inside nginx-ingress namespace
   kubernetes.core.helm_info:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     name: nginx-ingress
     release_namespace: nginx-ingress
     get_all_values: true
