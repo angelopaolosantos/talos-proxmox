@@ -47,3 +47,25 @@
   become: true
   tags:
     - keycloak
+
+- name: Setup Certmanager
+  import_tasks: setup_certmanager.yaml
+  become: true
+  tags:
+    - certmanager
+
+# install-kube-vip.yml
+- name: Install kube-vip using Helm
+  import_tasks: setup_kube_vip.yaml
+  vars:
+    kube_vip_namespace: kube-system  # or create kube-vip namespace if preferred
+    kube_vip_chart_version: "0.6.6"  # Check https://artifacthub.io/packages/helm/kube-vip/kube-vip for latest
+    kube_vip_values:
+      config:
+        address: "192.168.254.110"  # Virtual IP (VIP)
+      env:  
+        vip_interface: "eth0"         # Network interface
+        cp_enable: "true"
+        vip_leaderelection: "true"
+  tags:
+    - kube-vip

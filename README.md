@@ -92,6 +92,10 @@ Delete all created infastructure.
 * prometheus
 * sealed secrets
 
+#### to add
+* kube-vip
+* cert-manager
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ##### Useful commands to know:

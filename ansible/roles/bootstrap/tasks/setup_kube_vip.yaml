@@ -1,0 +1,53 @@
+---
+- name: Add kube-vip Helm repository
+  kubernetes.core.helm_repository:
+    name: kube-vip
+    repo_url: https://kube-vip.github.io/helm-charts/
+
+- name: Create kube-vip namespace (if not using kube-system)
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ kube_vip_namespace }}"
+    state: present
+  when: kube_vip_namespace != 'kube-system'
+
+- name: Install kube-vip via Helm
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    name: kube-vip
+    chart_ref: kube-vip/kube-vip
+    release_namespace: "{{ kube_vip_namespace }}"
+    chart_version: "{{ kube_vip_chart_version }}"
+    create_namespace: false
+    values: "{{ kube_vip_values }}"
+
+- name: Install the kube-vip Cloud Provider
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
+
+- name: Install the kube-vip Cloud Provider
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    definition: 
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: kubevip
+        namespace: kube-system
+      data:
+        # cidr-default: 192.168.0.200/29                      # CIDR-based IP range for use in the default Namespace
+        # range-development: 192.168.0.210-192.168.0.219      # Range-based IP range for use in the development Namespace
+        # cidr-finance: 192.168.0.220/29,192.168.0.230/29     # Multiple CIDR-based ranges for use in the finance Namespace
+        # cidr-global: 192.168.0.240/29                       # CIDR-based range which can be used in any Namespace
+        range-global: 192.168.254.130-192.168.254.149
+
