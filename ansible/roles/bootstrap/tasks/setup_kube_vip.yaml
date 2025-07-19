@@ -8,6 +8,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
     api_version: v1
     kind: Namespace
     name: "{{ kube_vip_namespace }}"

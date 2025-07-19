@@ -6,12 +6,6 @@
   tags:
     - nfs
 
-- name: Setup nginx-ingress
-  import_tasks: setup_nginx_ingress.yaml
-  become: true
-  tags:
-    - ingress
-
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
   become: true
@@ -62,10 +56,17 @@
     kube_vip_chart_version: "0.6.6"  # Check https://artifacthub.io/packages/helm/kube-vip/kube-vip for latest
     kube_vip_values:
       config:
-        address: "192.168.254.110"  # Virtual IP (VIP)
+        address: "192.168.254.129"  # Virtual IP (VIP)
       env:  
         vip_interface: "eth0"         # Network interface
         cp_enable: "true"
+        svc_election: "true"          # set to true for Gateway Controllors to work
         vip_leaderelection: "true"
   tags:
     - kube-vip
+
+- name: Setup Gateway
+  import_tasks: setup_gateway.yaml
+  become: true
+  tags:
+    - gateway
