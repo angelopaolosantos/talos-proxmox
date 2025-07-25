@@ -1,4 +1,9 @@
 # roles/controlplane/tasks/main.yml
+- name: install cilium CNI
+  import_tasks: setup_cilium_cni.yaml
+  become: true
+  tags:
+    - cilium
 
 - name: Setup NFS provisioner
   import_tasks: setup_nfs_provisioner.yaml
@@ -48,20 +53,13 @@
   tags:
     - certmanager
 
-# install-kube-vip.yml
-- name: Install kube-vip using Helm
+- name: Setup metallb
+  import_tasks: setup_metallb.yaml
+  tags:
+    - metallb
+
+- name: Setup kube-vip
   import_tasks: setup_kube_vip.yaml
-  vars:
-    kube_vip_namespace: kube-system  # or create kube-vip namespace if preferred
-    kube_vip_chart_version: "0.6.6"  # Check https://artifacthub.io/packages/helm/kube-vip/kube-vip for latest
-    kube_vip_values:
-      config:
-        address: "192.168.254.129"  # Virtual IP (VIP)
-      env:  
-        vip_interface: "eth0"         # Network interface
-        cp_enable: "true"
-        svc_election: "true"          # set to true for Gateway Controllors to work
-        vip_leaderelection: "true"
   tags:
     - kube-vip
 

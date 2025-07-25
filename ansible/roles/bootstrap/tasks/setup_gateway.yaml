@@ -5,7 +5,7 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
-    state: present
+    state: absent
 
 - name: Create envoy-gateway-system namespace
   vars:
@@ -26,45 +26,3 @@
     chart_ref: "oci://docker.io/envoyproxy/gateway-helm" # OCI chart path
     chart_version: "v1.4.2" # Chart version
     release_state: present
-
-- name: Apply Gateway definition
-  vars:
-    ansible_python_interpreter: /opt/k8s_venv/bin/python
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: present
-    definition:
-      apiVersion: gateway.networking.k8s.io/v1
-      kind: Gateway
-      metadata:
-        name: prod-web
-        namespace: default
-      spec:
-        gatewayClassName: eg
-        listeners:
-        - protocol: HTTP
-          port: 80
-          name: prod-web-gw
-          allowedRoutes:
-            namespaces:
-              from: Same
-
-- name: Apply Http Route definition
-  vars:
-    ansible_python_interpreter: /opt/k8s_venv/bin/python
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: present
-    definition:
-      apiVersion: gateway.networking.k8s.io/v1
-      kind: HTTPRoute
-      metadata:
-        name: foo
-        namespace: default
-      spec:
-        parentRefs:
-        - name: prod-web
-        rules:
-        - backendRefs:
-          - name: nginx
-            port: 80

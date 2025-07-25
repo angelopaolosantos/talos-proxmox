@@ -66,6 +66,13 @@
           PATH: "{{ venv_path }}/bin:{{ ansible_env.PATH }}"
           PYTHONPATH: "{{ venv_path }}/lib/python3.*/site-packages"
 
+    - name: install kubectl
+      shell:
+        cmd: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 - hosts: nfs
   vars_files:

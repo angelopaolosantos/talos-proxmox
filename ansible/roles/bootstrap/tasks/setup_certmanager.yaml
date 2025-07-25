@@ -57,7 +57,8 @@
                 gatewayHTTPRoute:
                   parentRefs:
                     - name: prod-web
-                      namespace: defaul
+                      namespace: default
+                      kind: Gateway
 
 - name: Configure Let's Encrypt Issuer - Production
   vars:
@@ -86,3 +87,4 @@
                   parentRefs:
                     - name: prod-web
                       namespace: default
+                      kind: Gateway

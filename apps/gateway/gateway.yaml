@@ -1,10 +1,17 @@
 ---
 apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: prod-web
 spec:
-  gatewayClassName: example
+  gatewayClassName: eg
   listeners:
   - protocol: HTTP
     port: 80
@@ -22,5 +29,5 @@ spec:
   - name: prod-web
   rules:
   - backendRefs:
-    - name: foo-svc
-      port: 8080
+    - name: nginx
+      port: 80
