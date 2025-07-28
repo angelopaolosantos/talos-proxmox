@@ -5,7 +5,7 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
-    state: absent
+    state: present
 
 - name: Create envoy-gateway-system namespace
   vars:

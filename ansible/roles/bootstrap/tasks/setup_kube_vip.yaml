@@ -1,4 +1,5 @@
 ---
+# Disable kube-vip loadbalancer, doesn't work with gateways yet
 - name: Install the kube-vip RBAC settings
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
@@ -66,11 +67,11 @@
               - name: cp_namespace
                 value: kube-system
               - name: svc_enable
-                value: "false"
+                value: "false" # LoadBalancer doesn't work with Gateways use metallb instead
               - name: svc_leasename
                 value: plndr-svcs-lock
               - name: svc_election
-                value: "false"
+                value: "false" # LoadBalancer doesn't work with Gateways use metallb instead
               - name: vip_leaderelection
                 value: "true"
               - name: vip_leasename
@@ -112,7 +113,7 @@
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: absent
+    state: absent # LoadBalancer doesn't work with Gateways use metallb instead
     src: https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
 
 - name: Set global IP range for kube-vip
@@ -120,7 +121,7 @@
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: absent
+    state: absent # LoadBalancer doesn't work with Gateways use metallb instead
     definition: 
       apiVersion: v1
       kind: ConfigMap
