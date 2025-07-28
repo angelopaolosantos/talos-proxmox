@@ -14,6 +14,8 @@
     release_namespace: linkerd
     create_namespace: true
     state: present # present | absent
+    set_values:
+      - value: installGatewayAPI=false
 
 - name: ensures linkerd dir exists
   file: 

@@ -15,7 +15,7 @@
     create_namespace: true
     state: present # present | absent
     set_values:
-      - value: nfs.server={{ tf_nfs_server_ip }}
+      - value: nfs.server={{ tf_nfs_server_ip[0] }}
         value_type: string
       - value: nfs.path=/data
         value_type: string
