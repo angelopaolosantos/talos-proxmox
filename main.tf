@@ -13,6 +13,14 @@ resource "tls_private_key" "ubuntu_private_key" {
   provisioner "local-exec" {
     command = "chmod 600 ${path.cwd}/.ssh/my-private-key.pem"
   }
+
+  provisioner "local-exec" { # Copy a "my-private-key.pem" to local computer.
+    command = "echo '${tls_private_key.ubuntu_private_key.public_key_openssh}' | tee ${path.cwd}/.ssh/my-public-key.pub"
+  }
+
+  provisioner "local-exec" {
+    command = "chmod 600 ${path.cwd}/.ssh/my-public-key.pub"
+  }
 }
 
 resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_qcow2_img" {
@@ -64,6 +72,16 @@ module "workers" {
 
 module "nfs_server" {
   source = "./modules/nfs_server"
+  file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+  public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
+
+  providers = {
+    proxmox = proxmox
+  }
+}
+
+module "ceph_monitors" {
+  source = "./modules/ceph_monitors"
   file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
@@ -151,6 +169,22 @@ resource "ansible_host" "ansible_control_node" {
   }
 }
 
+resource "ansible_host" "ceph_monitor" {
+  name   = module.ceph_monitors.ip[count.index]
+  groups = ["ceph_monitors","ceph_monitor_${count.index+1}"]
+
+  variables = {
+    ansible_user                 = module.ceph_monitors.vm_user
+    ansible_ssh_private_key_file = "./.ssh/my-private-key.pem"
+    ansible_python_interpreter   = "/usr/bin/python3"
+    host_name                    = module.ceph_monitors.name[count.index]
+    private_ip                   = module.ceph_monitors.ip[count.index]
+  }
+
+  count = module.ceph_monitors.ceph_count
+}
+
+
 resource "ansible_group" "controlplanes" {
   name     = "controlplanes"
 }
@@ -172,6 +206,10 @@ resource "ansible_group" "ansible_control_node" {
   name     = "ansible_control_node"
 }
 
+resource "ansible_group" "ceph_monitors" {
+  name     = "ceph_monitors"
+}
+
 # Export Terraform variable values to an Ansible var_file
 resource "local_file" "tf_ansible_vars_file_new" {
   content = <<-DOC
@@ -188,6 +226,10 @@ resource "local_file" "tf_ansible_vars_file_new" {
     %{ endfor }
     tf_nfs_server_ip:
     %{ for ip in module.nfs_server.ip ~}
+  - ${ip}
+    %{ endfor }
+    tf_ceph_monitor_ip:
+    %{ for ip in module.ceph_monitors.ip ~}
   - ${ip}
     %{ endfor }
     tf_ansible_control_node_ip: ${module.ansible_control_node.ip}

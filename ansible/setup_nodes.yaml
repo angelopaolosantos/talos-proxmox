@@ -79,3 +79,20 @@
     - tf_ansible_vars_file.yaml
   roles:
     - nfs
+
+- hosts: ceph_monitor_1
+  become: true
+  vars_files:
+    - tf_ansible_vars_file.yaml
+  tasks:
+    - name: Install cephadm # plugin kubernetes.core.k8s requirement
+      apt:
+        name: 
+         - cephadm
+        state: present
+        update_cache: no # Optional: Updates package cache before installing
+    - name: bootstrap cephadm
+      shell:
+        cmd: |
+          cephadm bootstrap --mon-ip {{ private_ip }}
+  tags: cephadm
