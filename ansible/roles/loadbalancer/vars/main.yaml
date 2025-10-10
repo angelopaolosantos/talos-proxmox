@@ -1,0 +1,8 @@
+vip: 192.168.254.120
+interface: eth0
+control_planes:
+  - 192.168.254.101
+  - 192.168.254.102
+  - 192.168.254.103
+haproxy_cfg_path: /etc/haproxy/haproxy.cfg
+keepalived_cfg_path: /etc/keepalived/keepalived.conf

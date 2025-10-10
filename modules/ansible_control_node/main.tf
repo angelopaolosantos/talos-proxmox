@@ -54,12 +54,12 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
   }
 
   cpu {
-    cores = 4
+    cores = var.cpu_cores
     type = "x86-64-v2-AES" // x86-64-v2-AES | host
   }
 
   memory {
-    dedicated = 4096 // 2048 | 4096 | 8192
+    dedicated = var.dedicated_memory // 2048 | 4096 | 8192
   } 
 
   network_device {

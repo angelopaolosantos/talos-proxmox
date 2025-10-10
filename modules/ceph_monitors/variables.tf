@@ -55,3 +55,13 @@ variable "ceph_allowed_access_ip" {
     type = string
     default = "192.168.254.0/24"
 }
+
+variable "cpu_cores" {
+  type = number
+  default = 4
+}
+
+variable "dedicated_memory" {
+  type = number
+  default = 4096
+}

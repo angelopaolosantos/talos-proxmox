@@ -41,3 +41,13 @@ variable "vm_user" {
     type = string
     default = "talos"
 }
+
+variable "cpu_cores" {
+  type = number
+  default = 4
+}
+
+variable "dedicated_memory" {
+  type = number
+  default = 4096
+}

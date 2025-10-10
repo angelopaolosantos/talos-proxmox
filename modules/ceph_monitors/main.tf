@@ -55,12 +55,12 @@ resource "proxmox_virtual_environment_vm" "ceph_vm" {
   }
 
   cpu {
-    cores = 2
+    cores = var.cpu_cores
     type = "x86-64-v2-AES" // x86-64-v2-AES | host
   }
 
   memory {
-    dedicated = 2048 // 2048 | 4096 | 8192
+    dedicated = var.dedicated_memory // 2048 | 4096 | 8192
   } 
 
   network_device {

@@ -1,14 +1,14 @@
-variable "controlplane_count" {
+variable "load_balancer_count" {
     type = number
     default = 3
 }
 
-variable "controlplane_ips" {
+variable "load_balancer_ips" {
     type = list(string)
     default = [
-        "192.168.254.101",
-        "192.168.254.102",
-        "192.168.254.103"
+        "192.168.254.109",
+        "192.168.254.110",
+        "192.168.254.111",
     ]
 }
 
@@ -49,6 +49,11 @@ variable "gateway" {
 variable "vm_user" {
     type = string
     default = "talos"
+}
+
+variable "load_balancer_allowed_access_ip" {
+    type = string
+    default = "192.168.254.0/24"
 }
 
 variable "cpu_cores" {

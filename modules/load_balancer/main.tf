@@ -1,6 +1,6 @@
-resource "proxmox_virtual_environment_vm" "controlplane_vm" {
-  count = var.controlplane_count
-  name        = "controlplane-vm-${count.index+1}"
+resource "proxmox_virtual_environment_vm" "load_balancer_vm" {
+  count = var.load_balancer_count
+  name        = "load-balancer-vm-${count.index+1}"
   description = "Managed by Terraform"
   tags        = ["terraform", "ubuntu", "k8s"]
 
@@ -24,19 +24,21 @@ resource "proxmox_virtual_environment_vm" "controlplane_vm" {
     size = 25
   }
 
-  tpm_state {
-    datastore_id = "local-zfs"
-    version = "v2.0"
-  }
-
   initialization {
     datastore_id = "local-zfs"
 
     ip_config {
       ipv4 {
-        address = "${var.controlplane_ips[count.index]}/${var.network_range}"
+        address = "${var.load_balancer_ips[count.index]}/${var.network_range}"
         gateway = var.gateway
       }
+    }
+
+    user_account {
+      keys     = [trimspace(var.public_key_openssh)]
+      # password = random_password.ubuntu_vm_password.result
+      password = "mypassword"
+      username = var.vm_user
     }
 
     interface = "ide2"

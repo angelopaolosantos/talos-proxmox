@@ -1,0 +1,27 @@
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    maxconn 2000
+    daemon
+
+defaults
+    log     global
+    mode    tcp
+    option  tcplog
+    option  dontlognull
+    retries 3
+    timeout connect 5s
+    timeout client 50s
+    timeout server 50s
+
+frontend k8s_api
+    bind *:6443
+    default_backend k8s_api_backend
+
+backend k8s_api_backend
+    balance roundrobin
+    option tcp-check
+    default-server inter 5s fall 3 rise 2
+    {% for cp in control_planes %}
+    server cp{{ loop.index }} {{ cp }}:6443 check
+    {% endfor %}

@@ -1,0 +1,10 @@
+# roles/ansible_control_node/tasks/main.yml
+
+- name: Setup ansible control node
+  import_tasks: setup_ansible_control_node.yaml
+  become: true
+  vars: 
+    kubeconfig_temp_path: "/tmp/kubeconfig"
+    venv_path: /opt/k8s_venv
+  tags:
+    - ansible_control_node

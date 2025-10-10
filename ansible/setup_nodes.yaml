@@ -1,98 +1,20 @@
 ---
 # file: setup_nodes.yaml
 - hosts: ansible_control_node
-  become: true
-  vars: 
-    kubeconfig_temp_path: "/tmp/kubeconfig"
-    venv_path: /opt/k8s_venv
-  vars_files:
-    - tf_ansible_vars_file.yaml
-  tasks:
-    - name: Install helm if not exists
-      unarchive:
-        src: https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz
-        dest: /usr/local/bin
-        extra_opts: "--strip-components=1"
-        owner: root
-        group: root
-        mode: 0755
-        remote_src: true
-      args:
-        creates: /usr/local/bin/helm
-
-    - name: Install a Helm plugin
-      kubernetes.core.helm_plugin:
-        plugin_path: https://github.com/databus23/helm-diff  # Replace with the actual plugin repository URL
-        state: present
-      # delegate_to: localhost # Run this task on the machine where Helm is installed (e.g., your Ansible control node)
-
-
-    - name: Copy kubeconfig file on the remote machine
-      ansible.builtin.copy:
-        src: ./../kubeconfig
-        dest: "{{ kubeconfig_temp_path }}"
-        mode: '0600'
-        owner: root
-        group: root
-
-    - name: Install python3-pip # plugin kubernetes.core.k8s requirement
-      apt:
-        name: 
-         - python3
-         - python3-venv
-         - python3-pip
-        state: present
-        update_cache: yes  # Optional: Updates package cache before installing
-
-    - name: Ensure pip is installed (alternative)
-      raw: test -e /usr/bin/pip3 || (apt update && apt install -y python3-pip)
-
-    - name: Create a virtual environment
-      command: python3 -m venv {{ venv_path }}
-      args:
-        creates: "{{ venv_path }}"
-
-    - name: install pre-requisites
-      pip:
-        virtualenv: "{{ venv_path }}"
-        name:
-          - openshift
-          - pyyaml
-          - kubernetes 
-
-    - name: Set environment for future tasks (optional)
-      set_fact:
-        k8s_env:
-          PATH: "{{ venv_path }}/bin:{{ ansible_env.PATH }}"
-          PYTHONPATH: "{{ venv_path }}/lib/python3.*/site-packages"
-
-    - name: install kubectl
-      shell:
-        cmd: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
-- hosts: nfs
   vars_files:
     - tf_ansible_vars_file.yaml
   roles:
-    - nfs
+    - ansible_control_node
 
-- hosts: ceph_monitor_1
+- hosts: load_balancers
   become: true
   vars_files:
     - tf_ansible_vars_file.yaml
-  tasks:
-    - name: Install cephadm # plugin kubernetes.core.k8s requirement
-      apt:
-        name: 
-         - cephadm
-        state: present
-        update_cache: no # Optional: Updates package cache before installing
-    - name: bootstrap cephadm
-      shell:
-        cmd: |
-          cephadm bootstrap --mon-ip {{ private_ip }}
-  tags: cephadm
+  roles:
+    - loadbalancer
+
+# - hosts: nfs
+#   vars_files:
+#     - tf_ansible_vars_file.yaml
+#   roles:
+#     - nfs
