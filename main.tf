@@ -58,9 +58,9 @@ module "controlplanes" {
   controlplane_count = 3
 
   controlplane_ips = [
-    "192.168.254.101",
-    "192.168.254.102",
-    "192.168.254.103"
+    "192.168.254.201",
+    "192.168.254.202",
+    "192.168.254.203"
   ]
 
   providers = {
@@ -76,8 +76,8 @@ module "workers" {
   worker_count = 2
 
   worker_ips = [
-    "192.168.254.104",
-    "192.168.254.105",
+    "192.168.254.204",
+    "192.168.254.205",
   ]
 
   providers = {
@@ -102,8 +102,8 @@ module "load_balancers" {
 
   load_balancer_count = 2
   load_balancer_ips = [
-    "192.168.254.106",
-    "192.168.254.107",
+    "192.168.254.206",
+    "192.168.254.207",
   ]
 
   cpu_cores = 2
@@ -119,7 +119,7 @@ module "ansible_control_node" {
   file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  ansible_ips = "192.168.254.108"
+  ansible_ips = "192.168.254.208"
 
   providers = {
     proxmox = proxmox
