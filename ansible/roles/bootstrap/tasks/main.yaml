@@ -5,11 +5,11 @@
   tags:
     - cilium
 
-- name: Setup NFS provisioner
-  import_tasks: setup_nfs_provisioner.yaml
-  become: true
-  tags:
-    - nfs
+# - name: Setup NFS provisioner
+#   import_tasks: setup_nfs_provisioner.yaml
+#   become: true
+#   tags:
+#     - nfs
 
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
@@ -58,10 +58,10 @@
   tags:
     - metallb
 
-- name: Setup kube-vip
-  import_tasks: setup_kube_vip.yaml
-  tags:
-    - kube-vip
+# - name: Setup kube-vip
+#   import_tasks: setup_kube_vip.yaml
+#   tags:
+#     - kube-vip
 
 - name: Setup Gateway
   import_tasks: setup_gateway.yaml

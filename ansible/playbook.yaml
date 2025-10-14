@@ -16,7 +16,7 @@
 
 - import_playbook: setup_nodes.yaml
   tags: setup_nodes
-# - import_playbook: setup_essential_apps.yaml
-#   tags: essentials
+- import_playbook: setup_essential_apps.yaml
+  tags: essentials
 # - import_playbook: setup_applications.yaml
 #   tags: apps

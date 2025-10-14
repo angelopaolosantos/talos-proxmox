@@ -48,7 +48,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: absent
+    state: present
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: "cilium.io/v2alpha1"

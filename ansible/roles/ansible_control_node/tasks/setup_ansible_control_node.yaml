@@ -2,21 +2,31 @@
 ---
 - name: Install helm if not exists
   unarchive:
-    src: https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz
+    src: https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz
     dest: /usr/local/bin
     extra_opts: "--strip-components=1"
     owner: root
     group: root
     mode: 0755
     remote_src: true
-  args:
-    creates: /usr/local/bin/helm
+  # args:
+  #   creates: /usr/local/bin/helm
+
+# # bug: /root/.local/share/helm/plugins/helm-diff/bin/diff missing. Do cmd instead
+# - name: Install a Helm plugin
+#   kubernetes.core.helm_plugin:
+#     plugin_path: https://github.com/databus23/helm-diff  # Replace with the actual plugin repository URL
+#     state: present
+#   # delegate_to: localhost # Run this task on the machine where Helm is installed (e.g., your Ansible control node)
+
 
 - name: Install a Helm plugin
-  kubernetes.core.helm_plugin:
-    plugin_path: https://github.com/databus23/helm-diff  # Replace with the actual plugin repository URL
-    state: present
-  # delegate_to: localhost # Run this task on the machine where Helm is installed (e.g., your Ansible control node)
+  shell:
+    cmd: |
+      helm plugin install https://github.com/databus23/helm-diff
+  args:
+    creates: /root/.local/share/helm/plugins/helm-diff/bin/diff
+
 
 
 - name: Copy kubeconfig file on the remote machine
