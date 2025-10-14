@@ -249,3 +249,4 @@ cluster:
 
 https://www.talos.dev/v1.10/talos-guides/install/bare-metal-platforms/secureboot/
 https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
+https://docs.ceph.com/en/reef/rbd/rbd-kubernetes/
