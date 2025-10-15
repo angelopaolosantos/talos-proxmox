@@ -11,6 +11,12 @@
 #   tags:
 #     - nfs
 
+- name: Setup ceph-csi
+  import_tasks: setup_ceph_csi.yaml
+  become: true
+  tags:
+    - ceph
+
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
   become: true
