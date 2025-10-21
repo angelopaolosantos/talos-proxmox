@@ -17,6 +17,12 @@
   tags:
     - ceph
 
+- name: Setup rook
+  import_tasks: setup_rook.yaml
+  become: true
+  tags:
+    - rook
+
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
   become: true

@@ -7,13 +7,13 @@
     api_version: v1
     kind: Namespace
     name: ceph-csi-rbd
-    state: present
+    state: absent
 
 - name: Configure csi-config-map.yaml
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: v1
@@ -38,7 +38,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: v1
@@ -54,7 +54,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: v1
@@ -75,7 +75,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: v1
@@ -97,7 +97,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: "/tmp/csi-rbdplugin-provisioner.yaml"
 
@@ -111,7 +111,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: "/tmp/csi-rbdplugin.yaml"
 
@@ -119,7 +119,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     definition:
       apiVersion: storage.k8s.io/v1

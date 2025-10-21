@@ -4,7 +4,7 @@
 - name: Clone the rook repository
   ansible.builtin.git:
     repo: 'https://github.com/rook/rook.git'
-    dest: '/tmp/ceph-k8s/'
+    dest: '/tmp/ceph-k8s/rook/'
     clone: yes
     update: yes
 
@@ -12,7 +12,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: "/tmp/ceph-k8s/rook/deploy/examples/crds.yaml"
 
@@ -20,7 +20,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: "/tmp/ceph-k8s/rook/deploy/examples/common.yaml"
 
@@ -28,7 +28,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    state: present
+    state: absent
     kubeconfig: "{{ kubeconfig_temp_path }}"
     src: "/tmp/ceph-k8s/rook/deploy/examples/operator.yaml"
 
@@ -37,14 +37,15 @@
     name: rook-release
     repo_url: "https://charts.rook.io/release"
 
-- name: Deploy the Helm chart from OCI
+- name: Deploy the Helm chart rook-ceph-cluster
   kubernetes.core.helm:
     kubeconfig: "{{ kubeconfig_temp_path }}"
     release_name: rook-ceph-cluster  # Release name
     release_namespace: rook-ceph
     create_namespace: true
-    chart_ref: "rook-release/rook-ceph-cluster" # OCI chart path
-    # chart_version: "1.15.6" # Chart version
-    release_state: present
+    chart_ref: "rook-release/rook-ceph-cluster"
+    release_state: absent
+    release_values:
+      operatorNamespace: rook-ceph
     values_files:
       - /tmp/ceph-k8s/rook/deploy/charts/rook-ceph-cluster/values-external.yaml
