@@ -9,3 +9,4 @@ init-config-cert-key filter=crypt diff=crypt merge=crypt
 kubeconfig filter=crypt diff=crypt merge=crypt
 csi_* filter=crypt diff=crypt merge=crypt
 ansible/roles/bootstrap/vars/main.yaml filter=crypt diff=crypt merge=crypt
+_out/* filter=crypt diff=crypt merge=crypt

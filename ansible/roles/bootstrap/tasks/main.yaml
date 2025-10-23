@@ -5,23 +5,12 @@
   tags:
     - cilium
 
+# ## Enable this or setup external Ceph Storage
 # - name: Setup NFS provisioner
 #   import_tasks: setup_nfs_provisioner.yaml
 #   become: true
 #   tags:
 #     - nfs
-
-- name: Setup ceph-csi
-  import_tasks: setup_ceph_csi.yaml
-  become: true
-  tags:
-    - ceph
-
-- name: Setup rook
-  import_tasks: setup_rook.yaml
-  become: true
-  tags:
-    - rook
 
 - name: Setup argo-cd
   import_tasks: setup_argocd.yaml
