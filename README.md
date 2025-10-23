@@ -188,8 +188,10 @@ Generate Machine Configurations with QEMU guest agent support
 In Proxmox, go to your VM –> Options and ensure that QEMU Guest Agent is Enabled
 Generate config files. --force to overwrite existings files
 ```
-talosctl gen config talos-proxmox-cluster https://$CONTROL_PLANE_IP:6443 --output-dir _out --install-image=factory.talos.dev/nocloud-installer-secureboot/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.10.5 --install-disk=/dev/sda --config-patch @tpm-disk-encryption.yaml --force
+talosctl gen config talos-proxmox-cluster https://$CONTROL_PLANE_IP:6443 --output-dir _out --install-image=factory.talos.dev/nocloud-installer-secureboot/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.10.5 --install-disk=/dev/sda --config-patch @tpm-disk-encryption.yaml --config-patch @cni_disable_patch.yaml --force
 ```
+cni_disable_patch.yaml will disable default cni installed by talos
+
 
 Create Control Plane Node
 ```
