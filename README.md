@@ -256,3 +256,4 @@ cluster:
 
 https://www.talos.dev/v1.10/talos-guides/install/bare-metal-platforms/secureboot/
 https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
+https://oneuptime.com/blog/post/2026-01-07-metallb-istio-gateway/

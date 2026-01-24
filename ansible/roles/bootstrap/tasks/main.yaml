@@ -64,6 +64,12 @@
 #   tags:
 #     - kube-vip
 
+- name: Setup Istio
+  import_tasks: setup_istio.yaml
+  become: true
+  tags:
+    - istio
+
 - name: Setup Gateway
   import_tasks: setup_gateway.yaml
   become: true
