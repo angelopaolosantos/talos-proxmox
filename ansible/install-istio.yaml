@@ -1,0 +1,5 @@
+- name: Install Istio Service Mesh
+  hosts: localhost
+  become: true
+  roles:
+    - istio

@@ -1,0 +1,11 @@
+istio_version: "1.22.1"
+istio_profile: "default"
+
+istio_install_dir: "/opt/istio"
+istioctl_path: "/usr/local/bin/istioctl"
+
+enable_ingress: true
+enable_egress: false
+
+sidecar_namespaces:
+  - default

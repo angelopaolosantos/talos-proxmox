@@ -4,5 +4,12 @@ metadata:
   name: example
   namespace: metallb-system
 spec:
+  # Reference both pools for L2 advertisement
+  # This tells MetalLB speakers to respond to ARP requests for IPs in these pools
   ipAddressPools:
   - first-pool
+  - istio-pool
+  # Optional: Limit which nodes can advertise these IPs using nodeSelectors
+  # nodeSelectors:
+  # - matchLabels:
+  #     node-role.kubernetes.io/worker: "true"

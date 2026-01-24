@@ -1,0 +1,39 @@
+- name: Download Istio
+  get_url:
+    url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/istio.tar.gz"
+
+- name: Ensure Istio install directory exists
+  file:
+    path: /opt/istio
+    state: directory
+    mode: '0755'
+  become: true
+
+
+- name: Extract Istio
+  unarchive:
+    src: "/tmp/istio.tar.gz"
+    dest: "{{ istio_install_dir }}"
+    remote_src: yes
+    creates: "{{ istio_install_dir }}/istio-{{ istio_version }}"
+
+- name: Install istioctl
+  copy:
+    src: "{{ istio_install_dir }}/istio-{{ istio_version }}/bin/istioctl"
+    dest: "{{ istioctl_path }}"
+    mode: '0755'
+    remote_src: yes
+
+- name: Display the current working directory
+  ansible.builtin.debug:
+    msg: "The current working directory is {{ lookup('env', 'PWD') }}"
+
+- name: Install Istio
+  command: >
+    {{ istioctl_path }} install
+    --set profile={{ istio_profile }}
+    --kubeconfig={{ lookup('env', 'PWD') }}/kubeconfig
+    --skip-confirmation
+  # environment:
+    # KUBECONFIG: "{{ lookup('env', 'KUBECONFIG') }}"

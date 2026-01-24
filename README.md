@@ -109,6 +109,11 @@ Run specific tasks of ansible playbook
 ansible-playbook -i ./ansible/inventory.yaml ./ansible/playbook.yaml --tags "metallb,nfs"
 ```
 
+Run specific playbook
+```
+ansible-playbook -i ./ansible/inventory.yaml ./ansible/install-istio.yaml --ask-become-pass
+```
+
 SSH into container
 ```
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i .ssh/my-private-key.pem ubuntu@192.168.254.101
