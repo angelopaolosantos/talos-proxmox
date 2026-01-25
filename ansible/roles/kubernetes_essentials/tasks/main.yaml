@@ -5,10 +5,11 @@
   tags:
     - cilium
 
-## Enable this or setup external Ceph Storage
+# Skip this since external Ceph Storage is used
 - name: Setup NFS provisioner
   import_tasks: nfs_provisioner.yaml
   become: true
+  when: not (skip_tasks | default(false))
   tags:
     - nfs
 
@@ -55,6 +56,7 @@
 
 - name: Setup kube-vip
   import_tasks: kube_vip.yaml
+  when: not (skip_tasks | default(false))
   tags:
     - kube-vip
 
@@ -64,14 +66,17 @@
   tags:
     - istio
 
+# Skip these since Istio is used
 - name: Setup linkerd
   import_tasks: linkerd.yaml
   become: true
+  when: not (skip_tasks | default(false))
   tags:
     - linkerd
 
 - name: Setup Gateway
   import_tasks: gateway.yaml
   become: true
+  when: not (skip_tasks | default(false))
   tags:
     - gateway
