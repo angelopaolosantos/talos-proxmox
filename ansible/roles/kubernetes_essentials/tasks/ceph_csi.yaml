@@ -1,0 +1,139 @@
+- name: Create Ceph CSI namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    kind: Namespace
+    name: "ceph-csi-rbd"
+    definition:
+      metadata:
+        labels:
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/warn: privileged
+
+- name: Create Ceph CSI namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    kind: Namespace
+    name: "ceph-csi-cephfs"
+    definition:
+      metadata:
+        labels:
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/warn: privileged
+
+
+- name: Create Ceph CSI ConfigMap
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    template: "ceph_csi/csi_configmap.yaml.j2"
+  # skip, helm will create secrets
+  when: not (skip_tasks | default(false))
+
+- name: Create Ceph CSI secret
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    template: "ceph_csi/csi_secret.yaml.j2"
+  # skip, helm will create secrets
+  when: not (skip_tasks | default(false))
+
+- name: Add Ceph CSI Helm repo
+  kubernetes.core.helm_repository:
+    name: ceph-csi
+    repo_url: https://ceph.github.io/csi-charts
+
+- name: Install Ceph CSI RBD
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_path }}"
+    name: ceph-csi-rbd
+    chart_ref: ceph-csi/ceph-csi-rbd
+    chart_version: "{{ ceph_csi_helm_version }}"
+    namespace: ceph-csi-rbd
+    create_namespace: false
+    values:
+      csiConfig:
+        - clusterID: "{{ ceph_cluster_fsid }}"
+          monitors: "{{ ceph_monitors }}"
+      secret:
+        create: true
+        userID: "{{ ceph_rbd_user }}"
+        userKey: "{{ ceph_rbd_user_key }}"
+      rbac:
+        create: true
+      serviceAccounts:
+        nodeplugin:
+          create: true
+        provisioner:
+          create: true
+
+- name: Install Ceph CSI CephFS
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_path }}"
+    name: ceph-csi-cephfs
+    chart_ref: ceph-csi/ceph-csi-cephfs
+    chart_version: "{{ ceph_csi_helm_version }}"
+    namespace: ceph-csi-cephfs
+    create_namespace: false
+    values:
+      csiConfig:
+        - clusterID: "{{ ceph_cluster_fsid }}"
+          monitors: "{{ ceph_monitors }}"
+      secret:
+        create: true
+        userID: "{{ ceph_cephfs_user }}"
+        userKey: "{{ ceph_cephfs_user_key }}"
+      rbac:
+        create: true
+      serviceAccounts:
+        nodeplugin:
+          create: true
+        provisioner:
+          create: true
+
+- name: Create Ceph RBD StorageClass
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: ceph-rbd
+      provisioner: rbd.csi.ceph.com
+      parameters:
+        clusterID: "{{ ceph_cluster_fsid }}"
+        pool: "{{ rbd_pool }}"
+        imageFeatures: layering
+        csi.storage.k8s.io/provisioner-secret-name: csi-rbd-secret
+        csi.storage.k8s.io/provisioner-secret-namespace: ceph-csi-rbd
+        csi.storage.k8s.io/node-stage-secret-name: csi-rbd-secret
+        csi.storage.k8s.io/node-stage-secret-namespace: ceph-csi-rbd
+      reclaimPolicy: Delete
+      allowVolumeExpansion: true
+      volumeBindingMode: Immediate
+
+- name: Create Ceph FS StorageClass
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: cephfs
+      provisioner: rbd.csi.ceph.com
+      parameters:
+        clusterID: "{{ ceph_cluster_fsid }}"
+        pool: "{{ cephfs_pool }}"
+        imageFeatures: layering
+        csi.storage.k8s.io/provisioner-secret-name: csi-cephfs-secret
+        csi.storage.k8s.io/provisioner-secret-namespace: ceph-csi-cephfs
+        csi.storage.k8s.io/node-stage-secret-name: csi-cephfs-secret
+        csi.storage.k8s.io/node-stage-secret-namespace: ceph-csi-cephfs
+      reclaimPolicy: Delete
+      allowVolumeExpansion: true
+      volumeBindingMode: Immediate

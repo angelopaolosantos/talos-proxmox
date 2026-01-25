@@ -1,11 +1,28 @@
+# pythin env with required libraries for ansible (kubernetes)
+ansible_python_interpreter: /opt/k8s_venv/bin/python
+
 # Ceph variables
-ceph_cluster_id: e81ba6a9-9f16-11f0-9511-bc24119bf710
+ceph_cluster_fsid: e81ba6a9-9f16-11f0-9511-bc24119bf710
 ceph_monitors:
  - 192.168.254.109:6789
  - 192.168.254.110:6789
  - 192.168.254.111:6789
-ceph_user_id: kubernetes
-ceph_user_key: AQDqvO5o6s9YAxAAt7QVi9FlssaVq9nlxSjCZw==
+
+# Manage Ceph users in CEPH-PROXMOX project
+
+ceph_rbd_user: k8s-rbd
+ceph_rbd_user_key: AQBJlXZp9JKjFRAAWGPQbGCy3IX2RbNuLYAs1w==
+
+ceph_cephfs_user: k8s-cephfs
+ceph_cephfs_user_key: AQBzlnZphEVDBxAA9CY2Zta0A1BK2rHiex2cZg==
+
+ceph_csi_helm_version: "3.11.0"
+
+rbd_pool: "k8s-rbd"
+cephfs_filesystem: "cephfs"
+cephfs_pool: "cephfs_data"
+
+ceph_csi_namespace: "ceph-csi"
 
 
 # Istio variables

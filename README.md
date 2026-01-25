@@ -168,6 +168,27 @@ kubectl oidc-login setup \
   --oidc-client-secret=hPAvh3sdWqFZoqYAktHeTaoJWN404tzP
 ```
 
+restart deployments/daemonsets
+```
+kubectl rollout restart deployment -n ceph-csi-rbd
+kubectl rollout restart daemonset -n ceph-csi-rbd
+```
+
+Recommended Namespace Labels (Best Practice)
+
+For infrastructure namespaces:
+```
+pod-security.kubernetes.io/enforce: privileged
+pod-security.kubernetes.io/audit: privileged
+pod-security.kubernetes.io/warn: privileged
+```
+
+For application namespaces:
+```
+pod-security.kubernetes.io/enforce: baseline
+# or restricted
+```
+
 Troubleshooting Terraform
 ```
 terraform refresh

@@ -11,6 +11,12 @@
   tags:
     - cilium
 
+- name: install Ceph CSI
+  import_tasks: ceph_csi.yaml
+  become: true
+  tags:
+    - ceph
+
 # Skip this since external Ceph Storage is used
 - name: Setup NFS provisioner
   import_tasks: nfs_provisioner.yaml
