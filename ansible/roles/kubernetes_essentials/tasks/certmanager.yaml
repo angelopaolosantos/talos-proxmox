@@ -8,7 +8,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     api_version: v1
     kind: Namespace
     name: cert-manager
@@ -18,7 +18,7 @@
   kubernetes.core.helm:
     state: present
     name: cert-manager
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     chart_ref: jetstack/cert-manager
     release_namespace: cert-manager
     create_namespace: false
@@ -36,7 +36,7 @@
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
     state: present
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     definition:
       apiVersion: cert-manager.io/v1
       kind: ClusterIssuer
@@ -65,7 +65,7 @@
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
     state: present
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     definition:
       apiVersion: cert-manager.io/v1
       kind: ClusterIssuer

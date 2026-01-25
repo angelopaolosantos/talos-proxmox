@@ -9,11 +9,11 @@
 - name: Deploy nfs provisioner
   kubernetes.core.helm:
     name: nfs-subdir-external-provisioner
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
     release_namespace: nfs-provisioner
     create_namespace: true
-    state: present # present | absent
+    state: absent # present | absent
     set_values:
       - value: nfs.server={{ tf_nfs_server_ip[0] }}
         value_type: string

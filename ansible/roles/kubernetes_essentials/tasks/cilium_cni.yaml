@@ -6,7 +6,7 @@
 
 - name: Deploy the Helm chart from OCI
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     release_name: cilium  # Release name
     release_namespace: kube-system
     create_namespace: false
@@ -49,7 +49,7 @@
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
     state: present
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     definition:
       apiVersion: "cilium.io/v2alpha1"
       kind: CiliumLoadBalancerIPPool

@@ -4,16 +4,16 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: absent
     src: https://kube-vip.io/manifests/rbac.yaml
 
 - name: Install the kube-vip daemonsets
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
-    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: absent
     definition:
       apiVersion: apps/v1
       kind: DaemonSet
@@ -112,7 +112,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     state: absent # LoadBalancer doesn't work with Gateways use metallb instead
     src: https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
 
@@ -120,7 +120,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     state: absent # LoadBalancer doesn't work with Gateways use metallb instead
     definition: 
       apiVersion: v1

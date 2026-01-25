@@ -89,7 +89,11 @@ module "workers" {
 #   source = "./modules/nfs_server"
 #   file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
 #   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
-
+#
+# nfs_ips = [
+#   "192.168.254.107"
+# ]
+#
 #   providers = {
 #     proxmox = proxmox
 #   }
@@ -245,6 +249,11 @@ resource "local_file" "tf_ansible_vars_file_new" {
   - ${ip}
     %{endfor}
     tf_ansible_control_node_ip: ${module.ansible_control_node.ip}
+    
+    tf_nfs_server_ip:
+    %{for ip in module.nfs_server.ip~}
+  - ${ip}
+    %{endfor}
     DOC
   filename = "./ansible/tf_ansible_vars_file.yaml"
 }

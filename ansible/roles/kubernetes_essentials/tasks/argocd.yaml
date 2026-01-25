@@ -19,7 +19,7 @@
 
 - name: Deploy argo-cd
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: argocd
     chart_ref: argo/argo-cd
     release_namespace: argocd

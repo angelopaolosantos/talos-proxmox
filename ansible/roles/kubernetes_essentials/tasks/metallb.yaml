@@ -4,7 +4,7 @@
 - name: check if strict ARP is enabled
 # see what changes would be made, returns nonzero returncode if different
   environment:
-    KUBECONFIG: "{{ kubeconfig_temp_path }}"
+    KUBECONFIG: "{{ kubeconfig_path }}"
   shell:
     cmd: |
       kubectl get configmap kube-proxy -n kube-system -o yaml | \
@@ -15,7 +15,7 @@
 - name: Enable strict ARP
 # actually apply the changes, returns nonzero returncode on errors only
   environment:
-    KUBECONFIG: "{{ kubeconfig_temp_path }}"
+    KUBECONFIG: "{{ kubeconfig_path }}"
   shell:
     cmd: |
       kubectl get configmap kube-proxy -n kube-system -o yaml | \
@@ -33,7 +33,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     state: present
     definition:
       apiVersion: v1
@@ -49,7 +49,7 @@
 
 - name: Deploy metallb chart
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: metallb
     chart_ref: metallb/metallb
     release_namespace: metallb-system
@@ -79,7 +79,7 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     state: present
     src: /tmp/metallb/addresspool.yaml
 
@@ -87,6 +87,6 @@
   vars:
     ansible_python_interpreter: /opt/k8s_venv/bin/python
   kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     state: present
     src: /tmp/metallb/l2advertisement.yaml

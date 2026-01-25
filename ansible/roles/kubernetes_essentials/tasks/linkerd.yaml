@@ -8,12 +8,12 @@
 
 - name: Deploy linkerd CRDs
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: linkerd-crds
     chart_ref: linkerd-edge/linkerd-crds
     release_namespace: linkerd
     create_namespace: true
-    state: present # present | absent
+    state: absent # present | absent
     set_values:
       - value: installGatewayAPI=false
 
@@ -40,12 +40,12 @@
 
 - name: Deploy linkerd
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: linkerd-control-plane
     chart_ref: linkerd-edge/linkerd-control-plane
     release_namespace: linkerd
     create_namespace: true
-    state: present # present | absent
+    state: absent # present | absent
     set_values:
       - value: identityTrustAnchorsPEM=/tmp/linkerd/ca.crt
         value_type: file

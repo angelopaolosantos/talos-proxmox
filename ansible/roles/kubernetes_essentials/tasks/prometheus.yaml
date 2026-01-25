@@ -8,7 +8,7 @@
 
 - name: Deploy prometheus-community
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: prometheus
     chart_ref: prometheus-community/kube-prometheus-stack
     release_namespace: prometheus

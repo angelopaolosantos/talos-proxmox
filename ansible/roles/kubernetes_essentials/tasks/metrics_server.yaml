@@ -8,7 +8,7 @@
 
 - name: Deploy metrics-server
   kubernetes.core.helm:
-    kubeconfig: "{{ kubeconfig_temp_path }}"
+    kubeconfig: "{{ kubeconfig_path }}"
     name: metrics-server
     chart_ref: metrics-server/metrics-server
     release_namespace: kube-system
