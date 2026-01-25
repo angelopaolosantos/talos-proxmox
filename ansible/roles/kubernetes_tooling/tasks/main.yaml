@@ -1,0 +1,11 @@
+- name: Install kubectl
+  import_tasks: kubectl.yaml
+
+- name: Install Helm
+  import_tasks: helm.yaml
+
+- name: Install Kustomize
+  import_tasks: kustomize.yaml
+
+- name: Install Istioctl
+  import_tasks: istioctl.yaml

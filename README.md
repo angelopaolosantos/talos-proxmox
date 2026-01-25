@@ -111,7 +111,7 @@ ansible-playbook -i ./ansible/inventory.yaml ./ansible/playbook.yaml --tags "met
 
 Run specific playbook
 ```
-ansible-playbook -i ./ansible/inventory.yaml ./ansible/install-istio.yaml --ask-become-pass
+ansible-playbook -i ./ansible/inventory.yaml ./ansible/install_kubernetes_tools.yaml --ask-become-pass
 ```
 
 SSH into container

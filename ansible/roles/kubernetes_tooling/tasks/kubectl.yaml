@@ -1,0 +1,21 @@
+- name: Check kubectl
+  command: kubectl version --client
+  register: kubectl_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Download kubectl
+  get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: /tmp/kubectl
+    mode: '0755'
+  when: kubectl_check.rc != 0
+
+- name: Install kubectl
+  copy:
+    src: /tmp/kubectl
+    dest: "{{ k8s_tools_install_dir }}/kubectl"
+    mode: '0755'
+    remote_src: true
+  become: "{{ k8s_tools_become }}"
+  when: kubectl_check.rc != 0
