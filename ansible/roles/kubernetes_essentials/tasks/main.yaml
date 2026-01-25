@@ -1,0 +1,77 @@
+# roles/controlplane/tasks/main.yml
+- name: install cilium CNI
+  import_tasks: setup_cilium_cni.yaml
+  become: true
+  tags:
+    - cilium
+
+# ## Enable this or setup external Ceph Storage
+# - name: Setup NFS provisioner
+#   import_tasks: setup_nfs_provisioner.yaml
+#   become: true
+#   tags:
+#     - nfs
+
+- name: Setup argo-cd
+  import_tasks: setup_argocd.yaml
+  become: true
+  tags:
+    - argocd
+
+- name: Setup sealed-secrets
+  import_tasks: setup_sealed_secrets.yaml
+  become: true
+  tags:
+    - sealedsecrets
+
+- name: Setup prometheus
+  import_tasks: setup_prometheus.yaml
+  become: true
+  tags:
+    - prometheus
+
+- name: Setup linkerd
+  import_tasks: setup_linkerd.yaml
+  become: true
+  tags:
+    - linkerd
+
+- name: Setup metrics-server
+  import_tasks: setup_metrics_server.yaml
+  become: true
+  tags:
+    - metrics-server
+
+- name: Setup keycloak
+  import_tasks: setup_keycloak.yaml
+  become: true
+  tags:
+    - keycloak
+
+- name: Setup Certmanager
+  import_tasks: setup_certmanager.yaml
+  become: true
+  tags:
+    - certmanager
+
+- name: Setup metallb
+  import_tasks: setup_metallb.yaml
+  tags:
+    - metallb
+
+# - name: Setup kube-vip
+#   import_tasks: setup_kube_vip.yaml
+#   tags:
+#     - kube-vip
+
+- name: Setup Istio
+  import_tasks: setup_istio.yaml
+  become: true
+  tags:
+    - istio
+
+- name: Setup Gateway
+  import_tasks: setup_gateway.yaml
+  become: true
+  tags:
+    - gateway

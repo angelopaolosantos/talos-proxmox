@@ -9,22 +9,27 @@
   get_url:
     url: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
     dest: /tmp/istio.tar.gz
-  when: istioctl_check.rc != 0
-
+    force: true
+  when: >
+    istioctl_check.rc != 0 or
+    (istioctl_check.stdout is not search(istio_version))
 
 - name: Extract Istio
   unarchive:
     src: /tmp/istio.tar.gz
     dest: /tmp
     remote_src: true
-  when: istioctl_check.rc != 0
-
+  when: >
+    istioctl_check.rc != 0 or
+    (istioctl_check.stdout is not search(istio_version))
 
 - name: Install istioctl
+  when: >
+    istioctl_check.rc != 0 or
+    (istioctl_check.stdout is not search(istio_version))
   copy:
     src: "/tmp/istio-{{ istio_version }}/bin/istioctl"
     dest: "{{ k8s_tools_install_dir }}/istioctl"
     mode: '0755'
     remote_src: true
   become: "{{ k8s_tools_become }}"
-  when: istioctl_check.rc != 0

@@ -55,7 +55,7 @@ You can make changes to the variable.tf file to adjust ip addresses to the proxm
 Default infastructure consists of:
 * 3 controlplanes
 * 2 worker nodes
-* 1 load balancer
+* 3 load balancer
 * 1 nfs (Network File System) server
 
 #### Run Terraform

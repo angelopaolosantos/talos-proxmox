@@ -1,0 +1,5 @@
+- name: Install Kubernetes Essentials
+  hosts: localhost
+  become: true
+  roles:
+    - kubernetes_essentials

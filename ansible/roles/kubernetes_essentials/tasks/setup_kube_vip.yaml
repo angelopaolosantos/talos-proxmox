@@ -1,0 +1,136 @@
+---
+# Disable kube-vip loadbalancer, doesn't work with gateways yet
+- name: Install the kube-vip RBAC settings
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: https://kube-vip.io/manifests/rbac.yaml
+
+- name: Install the kube-vip daemonsets
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/name: kube-vip-ds
+          app.kubernetes.io/version: v0.9.2
+        name: kube-vip-ds
+        namespace: kube-system
+      spec:
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: kube-vip-ds
+        template:
+          metadata:
+            creationTimestamp: null
+            labels:
+              app.kubernetes.io/name: kube-vip-ds
+              app.kubernetes.io/version: v0.9.2
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    # - key: node-role.kubernetes.io/master
+                    #   operator: Exists
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: Exists
+            containers:
+            - args:
+              - manager
+              env:
+              - name: vip_arp
+                value: "true"
+              - name: port
+                value: "6443"
+              - name: vip_nodename
+                valueFrom:
+                  fieldRef:
+                    fieldPath: spec.nodeName
+              - name: vip_interface
+                value: eth0 # update this as necessary
+              - name: vip_subnet
+                value: "32"
+              - name: dns_mode
+                value: first
+              - name: cp_enable
+                value: "true"
+              - name: cp_namespace
+                value: kube-system
+              - name: svc_enable
+                value: "false" # LoadBalancer doesn't work with Gateways use metallb instead
+              - name: svc_leasename
+                value: plndr-svcs-lock
+              - name: svc_election
+                value: "false" # LoadBalancer doesn't work with Gateways use metallb instead
+              - name: vip_leaderelection
+                value: "true"
+              - name: vip_leasename
+                value: plndr-cp-lock
+              - name: vip_leaseduration
+                value: "5"
+              - name: vip_renewdeadline
+                value: "3"
+              - name: vip_retryperiod
+                value: "1"
+              - name: enable_node_labeling
+                value: "true"
+              - name: address
+                value: 192.168.254.130 # update to an available IP in network
+              - name: prometheus_server
+                value: :2112
+              image: ghcr.io/kube-vip/kube-vip:v0.9.2
+              imagePullPolicy: IfNotPresent
+              name: kube-vip
+              resources: {}
+              securityContext:
+                capabilities:
+                  add:
+                  - NET_ADMIN
+                  - NET_RAW
+                  drop:
+                  - ALL
+            hostNetwork: true
+            serviceAccountName: kube-vip
+            tolerations:
+            - effect: NoSchedule
+              operator: Exists
+            - effect: NoExecute
+              operator: Exists
+        updateStrategy: {}
+
+- name: Install the kube-vip Cloud Provider
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: absent # LoadBalancer doesn't work with Gateways use metallb instead
+    src: https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml
+
+- name: Set global IP range for kube-vip
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: absent # LoadBalancer doesn't work with Gateways use metallb instead
+    definition: 
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: kubevip
+        namespace: kube-system
+      data:
+        # cidr-default: 192.168.0.200/29                      # CIDR-based IP range for use in the default Namespace
+        # range-development: 192.168.0.210-192.168.0.219      # Range-based IP range for use in the development Namespace
+        # cidr-finance: 192.168.0.220/29,192.168.0.230/29     # Multiple CIDR-based ranges for use in the finance Namespace
+        # cidr-global: 192.168.0.240/29                       # CIDR-based range which can be used in any Namespace
+        range-global: 192.168.254.131-192.168.254.149

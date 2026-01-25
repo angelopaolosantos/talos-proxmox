@@ -9,7 +9,9 @@
   get_url:
     url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_amd64.tar.gz"
     dest: /tmp/kustomize.tar.gz
-  when: kustomize_check.rc != 0
+  when: >
+    kustomize_check.rc != 0 or
+    (kustomize_check.stdout is not search(kustomize_version))
 
 
 - name: Extract kustomize
@@ -17,8 +19,9 @@
     src: /tmp/kustomize.tar.gz
     dest: /tmp
     remote_src: true
-  when: kustomize_check.rc != 0
-
+  when: >
+    kustomize_check.rc != 0 or
+    (kustomize_check.stdout is not search(kustomize_version))
 
 - name: Install kustomize
   copy:
@@ -27,4 +30,6 @@
     mode: '0755'
     remote_src: true
   become: "{{ k8s_tools_become }}"
-  when: kustomize_check.rc != 0
+  when: >
+    kustomize_check.rc != 0 or
+    (kustomize_check.stdout is not search(kustomize_version))

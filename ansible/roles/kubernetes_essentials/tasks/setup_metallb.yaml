@@ -1,0 +1,92 @@
+---
+# file: roles/controlplane/tasks/setup_metallb.yaml
+
+- name: check if strict ARP is enabled
+# see what changes would be made, returns nonzero returncode if different
+  environment:
+    KUBECONFIG: "{{ kubeconfig_temp_path }}"
+  shell:
+    cmd: |
+      kubectl get configmap kube-proxy -n kube-system -o yaml | \
+      sed -e "s/strictARP: false/strictARP: true/" | \
+      kubectl diff -f - -n kube-system
+  ignore_errors: true
+
+- name: Enable strict ARP
+# actually apply the changes, returns nonzero returncode on errors only
+  environment:
+    KUBECONFIG: "{{ kubeconfig_temp_path }}"
+  shell:
+    cmd: |
+      kubectl get configmap kube-proxy -n kube-system -o yaml | \
+      sed -e "s/strictARP: false/strictARP: true/" | \
+      kubectl apply -f - -n kube-system
+  ignore_errors: true
+
+# From repository
+- name: Add metallb chart repo
+  kubernetes.core.helm_repository:
+    name: metallb
+    repo_url: "https://metallb.github.io/metallb"
+
+- name: Create metallb-system namespace
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: metallb-system
+        labels: # required in Talos Linux for metallb to work
+          kubernetes.io/metadata.name: metallb-system
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/enforce-version: latest
+          pod-security.kubernetes.io/warn: privileged
+
+- name: Deploy metallb chart
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    name: metallb
+    chart_ref: metallb/metallb
+    release_namespace: metallb-system
+    create_namespace: false
+    state: present # present | absent
+    values:
+      speaker:
+        ignoreExcludeLB: true
+
+- name: ensures metallb dir exists
+  file: 
+    path: "/tmp/metallb"
+    state: directory
+    recurse: true
+
+- name: Copy addresspool.yaml
+  ansible.builtin.copy:
+    src: metallb/addresspool.yaml
+    dest: /tmp/metallb/addresspool.yaml
+
+- name: Copy l2advertisement.yaml
+  ansible.builtin.copy:
+    src: metallb/l2advertisement.yaml
+    dest: /tmp/metallb/l2advertisement.yaml
+
+- name: Apply addresspool.yaml
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: /tmp/metallb/addresspool.yaml
+
+- name: Apply l2advertisement.yaml
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    state: present
+    src: /tmp/metallb/l2advertisement.yaml

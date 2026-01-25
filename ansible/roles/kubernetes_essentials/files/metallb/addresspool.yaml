@@ -1,0 +1,28 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  # Define the IP range available for general LoadBalancer services
+  # Ensure these IPs are not used by DHCP or other systems on your network
+  addresses:
+  - 192.168.254.131-192.168.254.149
+  # autoAssign: true allows MetalLB to automatically assign IPs from this pool
+  autoAssign: true
+
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: istio-pool
+  namespace: metallb-system
+spec:
+  # Dedicated IP range for Istio ingress and egress gateways
+  # Using a separate pool allows for better IP management and potential
+  # different network policies for service mesh traffic
+  addresses:
+  - 192.168.254.150-192.168.254.154
+  # autoAssign: false means services must explicitly request this pool
+  # This prevents non-Istio services from consuming Istio-reserved IPs
+  autoAssign: false

@@ -1,0 +1,9 @@
+---
+- name: Install Istio
+  command: >
+    {{ istioctl_path }} install
+    --set profile={{ istio_profile }}
+    --skip-confirmation
+    --kubeconfig={{ kubeconfig_path }}
+  # environment:
+    # KUBECONFIG: "{{ lookup('env', 'KUBECONFIG') }}"

@@ -9,7 +9,10 @@
     url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
     dest: /tmp/kubectl
     mode: '0755'
-  when: kubectl_check.rc != 0
+    force: true
+  when: >
+    kubectl_check.rc != 0 or
+    (kubectl_check.stdout is not search(kubectl_version))
 
 - name: Install kubectl
   copy:
@@ -18,4 +21,6 @@
     mode: '0755'
     remote_src: true
   become: "{{ k8s_tools_become }}"
-  when: kubectl_check.rc != 0
+  when: >
+    kubectl_check.rc != 0 or
+    (kubectl_check.stdout is not search(kubectl_version))

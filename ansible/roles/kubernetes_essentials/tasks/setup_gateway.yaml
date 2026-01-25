@@ -1,0 +1,28 @@
+---
+- name: install k8s gateway api
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+    state: present
+
+- name: Create envoy-gateway-system namespace
+  vars:
+    ansible_python_interpreter: /opt/k8s_venv/bin/python
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    api_version: v1
+    kind: Namespace
+    name: envoy-gateway-system
+    state: present
+
+- name: Deploy the Helm chart from OCI
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig_temp_path }}"
+    release_name: eg # Release name
+    release_namespace: envoy-gateway-system
+    create_namespace: false
+    chart_ref: "oci://docker.io/envoyproxy/gateway-helm" # OCI chart path
+    chart_version: "v1.4.2" # Chart version
+    release_state: present

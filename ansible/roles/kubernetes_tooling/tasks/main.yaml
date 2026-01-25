@@ -1,3 +1,6 @@
+- name: Install requirements
+  import_tasks: preflight.yaml
+
 - name: Install kubectl
   import_tasks: kubectl.yaml
 

@@ -1,0 +1,23 @@
+# Ceph variables
+ceph_cluster_id: e81ba6a9-9f16-11f0-9511-bc24119bf710
+ceph_monitors:
+ - 192.168.254.109:6789
+ - 192.168.254.110:6789
+ - 192.168.254.111:6789
+ceph_user_id: kubernetes
+ceph_user_key: AQDqvO5o6s9YAxAAt7QVi9FlssaVq9nlxSjCZw==
+
+
+# Istio variables
+istio_profile: "default"
+istioctl_path: "/usr/local/bin/istioctl"
+
+enable_ingress: true
+enable_egress: false
+
+sidecar_namespaces:
+  - default
+
+
+kubeconfig_path: "{{ lookup('env', 'PWD') }}/kubeconfig"
+venv_path: /opt/k8s_venv
