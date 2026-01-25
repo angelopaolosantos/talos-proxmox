@@ -16,7 +16,7 @@
     values:
       ipam:
         mode: kubernetes
-      kubeProxyReplacement: false
+      kubeProxyReplacement: true
       securityContext:
         capabilities:
           ciliumAgent:
@@ -39,23 +39,9 @@
         autoMount:
           enabled: false
         hostRoot: /sys/fs/cgroup
+      k8sServiceHost: 192.168.254.120 # localhost
+      k8sServicePort: 6443 #7445
       gatewayAPI:
         enabled: true
         enableAlpn: true
         enableAppProtocol: true
-
-- name: Create Cilium Load Balancer IP Pool
-  vars:
-    ansible_python_interpreter: /opt/k8s_venv/bin/python
-  kubernetes.core.k8s:
-    state: present
-    kubeconfig: "{{ kubeconfig_path }}"
-    definition:
-      apiVersion: "cilium.io/v2alpha1"
-      kind: CiliumLoadBalancerIPPool
-      metadata:
-        name: "pool"
-      spec:
-        blocks:
-          - start: "192.168.254.131"
-            stop: "192.168.254.149"

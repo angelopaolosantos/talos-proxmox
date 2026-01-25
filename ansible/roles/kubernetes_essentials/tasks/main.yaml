@@ -1,4 +1,10 @@
 # roles/controlplane/tasks/main.yml
+- name: Setup Gateway
+  import_tasks: gateway.yaml
+  become: true
+  tags:
+    - gateway
+
 - name: install cilium CNI
   import_tasks: cilium_cni.yaml
   become: true

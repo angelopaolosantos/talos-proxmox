@@ -11,6 +11,8 @@
       sed -e "s/strictARP: false/strictARP: true/" | \
       kubectl diff -f - -n kube-system
   ignore_errors: true
+  # skip since cilium disabled kube-proxy
+  when: not (skip_tasks | default(false))
 
 - name: Enable strict ARP
 # actually apply the changes, returns nonzero returncode on errors only
@@ -22,6 +24,8 @@
       sed -e "s/strictARP: false/strictARP: true/" | \
       kubectl apply -f - -n kube-system
   ignore_errors: true
+  # skip since cilium disabled kube-proxy
+  when: not (skip_tasks | default(false))
 
 # From repository
 - name: Add metallb chart repo
