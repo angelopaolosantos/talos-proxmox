@@ -55,13 +55,8 @@ module "controlplanes" {
   file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  controlplane_count = 3
-
-  controlplane_ips = [
-    "192.168.254.201",
-    "192.168.254.202",
-    "192.168.254.203"
-  ]
+  controlplane_count = var.controlplane_count
+  controlplane_ips = var.controlplane_ips
 
   providers = {
     proxmox = proxmox
@@ -73,12 +68,8 @@ module "workers" {
   file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  worker_count = 2
-
-  worker_ips = [
-    "192.168.254.204",
-    "192.168.254.205",
-  ]
+  worker_count = var.worker_count
+  worker_ips = var.worker_ips
 
   providers = {
     proxmox = proxmox
@@ -104,11 +95,8 @@ module "load_balancers" {
   file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  load_balancer_count = 2
-  load_balancer_ips = [
-    "192.168.254.206",
-    "192.168.254.207",
-  ]
+  load_balancer_count = var.load_balancer_count
+  load_balancer_ips = var.load_balancer_ips
 
   cpu_cores = 2
   dedicated_memory = 2048
@@ -123,7 +111,7 @@ module "ansible_control_node" {
   file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  ansible_ips = "192.168.254.208"
+  ansible_ips = var.ansible_ips
 
   providers = {
     proxmox = proxmox

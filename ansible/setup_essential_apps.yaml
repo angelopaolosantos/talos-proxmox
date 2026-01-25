@@ -1,8 +1,0 @@
-- hosts: ansible_control_node
-  become: true
-  vars: 
-    kubeconfig_temp_path: "/tmp/kubeconfig"
-  vars_files:
-    - tf_ansible_vars_file.yaml
-  roles:
-    - bootstrap
