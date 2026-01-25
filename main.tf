@@ -243,5 +243,5 @@ resource "local_file" "tf_ansible_vars_file_new" {
   - ${ip}
     %{endfor}
     DOC
-  filename = "./ansible/tf_ansible_vars_file.yaml"
+  filename = "./ansible/group_vars/all/tf_ansible_vars_file.yaml"
 }

@@ -1,0 +1,4 @@
+---
+- hosts: ansible_control_node
+  roles:
+    - ansible_control_node

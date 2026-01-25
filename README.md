@@ -69,6 +69,7 @@ terraform apply
 
 #### Run Ansible Playbook
 ```
+chmod 600 ./.ssh/my-private-key.pem
 export ANSIBLE_HOST_KEY_CHECKING=False
 ansible-playbook -i ./ansible/inventory.yaml ./ansible/playbook.yaml
 ```
