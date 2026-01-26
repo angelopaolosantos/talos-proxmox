@@ -237,11 +237,13 @@ resource "local_file" "tf_ansible_vars_file_new" {
   - ${ip}
     %{endfor}
     tf_ansible_control_node_ip: ${module.ansible_control_node.ip}
-    
-    tf_nfs_server_ip:
-    %{for ip in module.nfs_server.ip~}
-  - ${ip}
-    %{endfor}
     DOC
+
+  ##  Add this if using nfs_server
+  #   tf_nfs_server_ip:
+  #   %{for ip in module.nfs_server.ip~}
+  # - ${ip}
+  #   %{endfor}
+  
   filename = "./ansible/group_vars/all/tf_ansible_vars_file.yaml"
 }
