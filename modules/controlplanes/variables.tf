@@ -58,5 +58,5 @@ variable "cpu_cores" {
 
 variable "dedicated_memory" {
   type = number
-  default = 4096
+  default = 6144
 }

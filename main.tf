@@ -23,25 +23,21 @@ resource "tls_private_key" "ubuntu_private_key" {
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_qcow2_img" {
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = "pve01"
-  // url          = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img" 
-  // Using latest image will destroy vms when file is changed. Prefer to use specific image.
-  url            = "https://cloud-images.ubuntu.com/noble/20250704/noble-server-cloudimg-amd64.img"
-  upload_timeout = 4444 // seconds, make it longer to accomodate big files
-}
+# resource "proxmox_virtual_environment_download_file" "latest_ubuntu_22_jammy_qcow2_img" {
+#   content_type = "iso"
+#   datastore_id = "local"
+#   node_name    = "pve01"
+#   url            = "https://cloud-images.ubuntu.com/noble/20250704/noble-server-cloudimg-amd64.img"
+#   upload_timeout = 4444 // seconds, make it longer to accomodate big files
+# }
 
-resource "proxmox_virtual_environment_download_file" "latest_talos_linux_nocloud_img" {
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = "pve01"
-  url          = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/v1.10.5/nocloud-amd64-secureboot.iso"
-  // Using latest image will destroy vms when file is changed. Prefer to use specific image.
-  // url          = "https://cloud-images.ubuntu.com/jammy/20240710/jammy-server-cloudimg-amd64.img"
-  upload_timeout = 4444 // seconds, make it longer to accomodate big files
-}
+# resource "proxmox_virtual_environment_download_file" "latest_talos_linux_nocloud_img" {
+#   content_type = "iso"
+#   datastore_id = "local"
+#   node_name    = "pve01"
+#   url          = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/v1.10.5/nocloud-amd64-secureboot.iso"
+#   upload_timeout = 4444 // seconds, make it longer to accomodate big files
+# }
 
 
 resource "random_password" "vm_password" {
@@ -52,7 +48,11 @@ resource "random_password" "vm_password" {
 
 module "controlplanes" {
   source             = "./modules/controlplanes"
-  file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
+  # file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
+  # For Proxmox environments download images once to the Proxmox host and manage them outside Terraform.
+  # Use Terraform for infrastructure, not artifact transport. It leads to fewer brittle failures.
+  # File exists in local:iso/ubuntu-24.04-noble.img
+  file_id            = "local:iso/nocloud-amd64-secureboot.iso"
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
   controlplane_count = var.controlplane_count
@@ -65,7 +65,8 @@ module "controlplanes" {
 
 module "workers" {
   source             = "./modules/workers"
-  file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
+  # file_id            = proxmox_virtual_environment_download_file.latest_talos_linux_nocloud_img.id
+  file_id            = "local:iso/nocloud-amd64-secureboot.iso"
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
   worker_count = var.worker_count
@@ -78,7 +79,8 @@ module "workers" {
 
 # module "nfs_server" {
 #   source = "./modules/nfs_server"
-#   file_id = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+#   # file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+#   file_id            = "local:noble-server-cloudimg-amd64.img"
 #   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 #
 # nfs_ips = [
@@ -92,7 +94,8 @@ module "workers" {
 
 module "load_balancers" {
   source             = "./modules/load_balancer"
-  file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+  # file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+  file_id            = "local:iso/noble-server-cloudimg-amd64.img"
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
   load_balancer_count = var.load_balancer_count
@@ -108,7 +111,8 @@ module "load_balancers" {
 
 module "ansible_control_node" {
   source             = "./modules/ansible_control_node"
-  file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+  # file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+  file_id            = "local:iso/noble-server-cloudimg-amd64.img"
   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
   ansible_ips = var.ansible_ips
@@ -133,7 +137,7 @@ resource "ansible_host" "controlplane" {
   }
   count = module.controlplanes.controlplane_count
 
-  # Added to destroy this node before nfs server, otherwise will get stuck with nfs error restricting shutdown.
+  # Add depends_on to destroy this node before nfs server, otherwise will get stuck with nfs error restricting shutdown.
   # depends_on = [ansible_host.nfs]
 }
 
