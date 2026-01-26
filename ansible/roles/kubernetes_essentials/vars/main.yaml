@@ -1,40 +1,19 @@
-# pythin env with required libraries for ansible (kubernetes)
-ansible_python_interpreter: /opt/k8s_venv/bin/python
-
-# Ceph variables
-ceph_cluster_fsid: e81ba6a9-9f16-11f0-9511-bc24119bf710
-ceph_monitors:
- - 192.168.254.109:6789
- - 192.168.254.110:6789
- - 192.168.254.111:6789
-
-# Manage Ceph users in CEPH-PROXMOX project
-
-ceph_rbd_user: k8s-rbd
-ceph_rbd_user_key: AQBJlXZp9JKjFRAAWGPQbGCy3IX2RbNuLYAs1w==
-
-ceph_cephfs_user: k8s-cephfs
-ceph_cephfs_user_key: AQBzlnZphEVDBxAA9CY2Zta0A1BK2rHiex2cZg==
-
-ceph_csi_helm_version: "3.11.0"
-
-rbd_pool: "k8s-rbd"
-cephfs_filesystem: "cephfs"
-cephfs_pool: "cephfs_data"
-
-ceph_csi_namespace: "ceph-csi"
-
-
-# Istio variables
-istio_profile: "default"
-istioctl_path: "/usr/local/bin/istioctl"
-
-enable_ingress: true
-enable_egress: false
-
-sidecar_namespaces:
-  - default
-
-
-kubeconfig_path: "{{ lookup('env', 'PWD') }}/kubeconfig"
-venv_path: /opt/k8s_venv
+U2FsdGVkX1/qT4pPzHjTpB3GZhFenETe7AvDSSvqkiZuHqUUejcpGXXd/ogbdb1g
+0W++MOUl4gGGfEUXcI8e8cbmUtlMjwQeNllbqoP3AyiYO2Qtuqy3OxloYRSdcNUw
+5XZbCgZ22PGpRS4oOvD0WfjKhCVBQWnhijR5cjzPGicvUdZ57ZOPFQw3GtBQRUiZ
+bHmGBQQizkNDBAHEMHCjeIl7r2YM88J+kJP0ZnBsvoWjqX5XNC1zQEErQAOvT81s
+HWfT94p8piXHgeiaW4WhbRo043Z1pYTB9hQ+6QbXYQEZyDBS89qkGNxCJ1o4vkNC
+/VwCAxT7RIjvVUmTK2g/+BhcKdbiKQ95RRgvALq9KGTrD/lp5svWp89xKhAvHkqy
+a5aFFsiFk1fwpQAzwGCbmo2jTuWKeEJ42cmxCuGnx4j/RRdf75YLnHH0yIYeCuM1
+5RCirlb0iJahLK/8Mg2AbcxRugRQTD/4f8hG/ZB9meyMrDI71dqPZ343uzNz41ut
+HUG4Ib9jiqhKsIqYmbvdXQl90Y79O6UtAqJD6U+t9ALgZALkfMv4L3hhYykIL1Yx
+J98wg46sdb+C0sj1qzLIf7VluAAgs82bjOqJF/GLkZiEz36KGwpjMmgFqushbHfb
+Lv+GZ8TayJjCY7nmb1T1U9E4lt5N4cG8E5u9dHMfs3E6U7hWgJmiRX/z56putiD0
+j0saWkDSs3j6R8q1x4jZGLJNE8E3qWa9kbO6+JwS47dh/RxJpXd4rzeeLpei2gFU
+WfJRzDlABhEvMXGuQhvs+7o+tZCV4drxJa45VmLYvvOj9fC/D7S4FQKklx/2xN3c
+1y0Y/AthbMS70D5HKnBGKRiqjMDq4Dslx8bMHWa3j8y2AQqWfrse+phTOdXPJ6kK
+kES1zHhz/DkVbKNuZPBA8VgrgVZcw9sM+F3/82123vu6uPkUs5vT1tz2Tt6tipX6
+8tFHbSpAWwWg4Jin95oRAJwA6+cEKhFWYz1hMjaI6jGvLUSXp6vxmm/EVu533lgG
+nm76uExPBRb63PDPfNArcYthC4kLkPZw4U3WH+qBJoVONbk9ezzho8+Ji/QyMN7K
+bh7QUhV0lv+Z8X/cBsHuIU5o7hbGCC63KJTrV0TpbYMqbjVFdzlSc5yktBgg5+M4
+1Ps5CMJZcI3oqG60yfgGwED8d0I3p0NLGkoXHbzt8L5a2MKX+2MSXwVLZF0M0h31
