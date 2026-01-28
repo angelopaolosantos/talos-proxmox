@@ -7,3 +7,6 @@
     --kubeconfig={{ kubeconfig_path }}
   # environment:
     # KUBECONFIG: "{{ lookup('env', 'KUBECONFIG') }}"
+
+
+

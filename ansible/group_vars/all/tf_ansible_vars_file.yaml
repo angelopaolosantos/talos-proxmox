@@ -14,4 +14,3 @@ tf_load_balancer_ip:
   - 192.168.254.206
   - 192.168.254.207
 
-tf_ansible_control_node_ip: 192.168.254.208

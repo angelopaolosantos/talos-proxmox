@@ -109,18 +109,18 @@ module "load_balancers" {
   }
 }
 
-module "ansible_control_node" {
-  source             = "./modules/ansible_control_node"
-  # file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
-  file_id            = "local:iso/noble-server-cloudimg-amd64.img"
-  public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
+# module "ansible_control_node" {
+#   source             = "./modules/ansible_control_node"
+#   # file_id            = proxmox_virtual_environment_download_file.latest_ubuntu_22_jammy_qcow2_img.id
+#   file_id            = "local:iso/noble-server-cloudimg-amd64.img"
+#   public_key_openssh = tls_private_key.ubuntu_private_key.public_key_openssh
 
-  ansible_ips = var.ansible_ips
+#   ansible_ips = var.ansible_ips
 
-  providers = {
-    proxmox = proxmox
-  }
-}
+#   providers = {
+#     proxmox = proxmox
+#   }
+# }
 
 # Ansible Section 
 
@@ -184,18 +184,18 @@ resource "ansible_host" "load_balancer" {
   count = module.load_balancers.load_balancer_count
 }
 
-resource "ansible_host" "ansible_control_node" {
-  name   = module.ansible_control_node.ip
-  groups = ["ansible_control_node"]
+# resource "ansible_host" "ansible_control_node" {
+#   name   = module.ansible_control_node.ip
+#   groups = ["ansible_control_node"]
 
-  variables = {
-    ansible_user                 = module.ansible_control_node.vm_user
-    ansible_ssh_private_key_file = "./.ssh/my-private-key.pem"
-    ansible_python_interpreter   = "/usr/bin/python3"
-    host_name                    = module.ansible_control_node.name
-    private_ip                   = module.ansible_control_node.ip
-  }
-}
+#   variables = {
+#     ansible_user                 = module.ansible_control_node.vm_user
+#     ansible_ssh_private_key_file = "./.ssh/my-private-key.pem"
+#     ansible_python_interpreter   = "/usr/bin/python3"
+#     host_name                    = module.ansible_control_node.name
+#     private_ip                   = module.ansible_control_node.ip
+#   }
+# }
 
 resource "ansible_group" "controlplanes" {
   name = "controlplanes"
@@ -214,9 +214,9 @@ resource "ansible_group" "cluster" {
 #   name = "nfs"
 # }
 
-resource "ansible_group" "ansible_control_node" {
-  name = "ansible_control_node"
-}
+# resource "ansible_group" "ansible_control_node" {
+#   name = "ansible_control_node"
+# }
 
 resource "ansible_group" "load_balancers" {
   name = "load_balancers"
@@ -240,10 +240,11 @@ resource "local_file" "tf_ansible_vars_file_new" {
     %{for ip in module.load_balancers.ip~}
   - ${ip}
     %{endfor}
-    tf_ansible_control_node_ip: ${module.ansible_control_node.ip}
     DOC
 
-  ##  Add this if using nfs_server
+  ##  Add this to configuration if enabled
+  #   tf_ansible_control_node_ip: ${module.ansible_control_node.ip}
+
   #   tf_nfs_server_ip:
   #   %{for ip in module.nfs_server.ip~}
   # - ${ip}
