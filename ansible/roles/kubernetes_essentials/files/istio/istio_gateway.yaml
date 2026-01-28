@@ -35,6 +35,7 @@ spec:
       namespace: default
       port: 80
 ---
+# For cert-manager to generate certs Certificate resource is required.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -47,4 +48,3 @@ spec:
     kind: ClusterIssuer
   dnsNames:
   - prometheus.deviantlab.duckdns.org
-
